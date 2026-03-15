@@ -1,6 +1,6 @@
 from nado_protocol.utils.enum import StrEnum
 from typing import Optional, Union
-from pydantic import validator
+from pydantic import field_validator
 from nado_protocol.utils.model import NadoBaseModel
 from nado_protocol.engine_client.types.models import (
     ApplyDeltaTx,
@@ -165,7 +165,8 @@ class QueryMarketPriceParams(NadoBaseModel):
 class SpotLeverageSerializerMixin(NadoBaseModel):
     spot_leverage: Optional[bool]
 
-    @validator("spot_leverage")
+    @field_validator("spot_leverage")
+    @classmethod
     def spot_leverage_to_str(cls, v: Optional[bool]) -> Optional[str]:
         return str(v).lower() if v is not None else v
 
@@ -183,15 +184,18 @@ class QueryMaxOrderSizeParams(SpotLeverageSerializerMixin):
     reduce_only: Optional[bool]
     isolated: Optional[bool]
 
-    @validator("direction")
+    @field_validator("direction")
+    @classmethod
     def direction_to_str(cls, v: MaxOrderSizeDirection) -> str:
         return v.value
 
-    @validator("reduce_only")
+    @field_validator("reduce_only")
+    @classmethod
     def reduce_only_to_str(cls, v: Optional[bool]) -> Optional[str]:
         return str(v).lower() if v is not None else v
 
-    @validator("isolated")
+    @field_validator("isolated")
+    @classmethod
     def isolated_to_str(cls, v: Optional[bool]) -> Optional[str]:
         return str(v).lower() if v is not None else v
 

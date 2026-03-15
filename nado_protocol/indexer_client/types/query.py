@@ -1,7 +1,7 @@
 from nado_protocol.utils.enum import StrEnum
 from typing import Dict, List, Optional, Tuple, Type, Union
 
-from pydantic import Field, validator
+from pydantic import Field
 from nado_protocol.indexer_client.types.models import (
     IndexerCandlestick,
     IndexerCandlesticksGranularity,
@@ -699,7 +699,7 @@ def to_indexer_request(params: IndexerParams) -> IndexerRequest:
     }
 
     RequestClass, field_name = indexer_request_mapping[type(params)]
-    return RequestClass.parse_obj({field_name: params.dict(exclude_none=False)})  # type: ignore[attr-defined]
+    return RequestClass.model_validate({field_name: params.model_dump(exclude_none=False)})  # type: ignore[attr-defined]
 
 
 IndexerTickersData = Dict[str, IndexerTickerInfo]

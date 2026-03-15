@@ -94,7 +94,7 @@ class NadoContracts:
         self.network = contracts_context.network
         self.w3 = Web3(Web3.HTTPProvider(node_url))
 
-        self.contracts_context = NadoContractsContext.parse_obj(contracts_context)
+        self.contracts_context = NadoContractsContext.model_validate(contracts_context)
         self.querier: Contract = self.w3.eth.contract(
             address=contracts_context.querier_addr, abi=load_abi(NadoAbiName.FQUERIER)  # type: ignore
         )
@@ -163,7 +163,7 @@ class NadoContracts:
         Returns:
             str: The transaction hash of the deposit operation.
         """
-        params = DepositCollateralParams.parse_obj(params)
+        params = DepositCollateralParams.model_validate(params)
         if params.referral_code is not None and params.referral_code.strip():
             return self.execute(
                 self.endpoint.functions.depositCollateralWithReferral(
@@ -307,7 +307,7 @@ class NadoContracts:
         signer: LocalAccount,
     ) -> str:
         assert self.foundation_rewards_airdrop is not None
-        proofs = [proof.dict() for proof in claim_proofs]
+        proofs = [proof.model_dump() for proof in claim_proofs]
         return self.execute(
             self.foundation_rewards_airdrop.functions.claim(proofs), signer
         )
@@ -330,7 +330,7 @@ class NadoContracts:
         Returns:
             str: The transaction hash of the claim operation.
         """
-        params = ClaimBuilderFeeParams.parse_obj(params)
+        params = ClaimBuilderFeeParams.model_validate(params)
         sender_bytes = subaccount_to_bytes32(
             params.subaccount_owner, params.subaccount_name
         )

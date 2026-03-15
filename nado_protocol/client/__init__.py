@@ -16,7 +16,7 @@ from nado_protocol.utils.backend import NadoBackendURL, Signer
 from nado_protocol.utils.enum import StrEnum
 from nado_protocol.client.context import *
 
-from pydantic import parse_obj_as
+from pydantic import AnyUrl, TypeAdapter
 
 
 class NadoClientMode(StrEnum):
@@ -149,7 +149,7 @@ def create_nado_client(
         contracts_context = context_opts.contracts_context
 
     if context_opts:
-        parsed_context_opts: NadoClientContextOpts = NadoClientContextOpts.parse_obj(
+        parsed_context_opts: NadoClientContextOpts = NadoClientContextOpts.model_validate(
             context_opts
         )
         engine_endpoint_url = (
@@ -167,9 +167,9 @@ def create_nado_client(
     context = create_nado_client_context(
         NadoClientContextOpts(
             rpc_node_url=rpc_node_url,
-            engine_endpoint_url=parse_obj_as(AnyUrl, engine_endpoint_url),
-            indexer_endpoint_url=parse_obj_as(AnyUrl, indexer_endpoint_url),
-            trigger_endpoint_url=parse_obj_as(AnyUrl, trigger_endpoint_url),
+            engine_endpoint_url=TypeAdapter(AnyUrl).validate_python( engine_endpoint_url),
+            indexer_endpoint_url=TypeAdapter(AnyUrl).validate_python( indexer_endpoint_url),
+            trigger_endpoint_url=TypeAdapter(AnyUrl).validate_python( trigger_endpoint_url),
             contracts_context=contracts_context,
         ),
         signer,

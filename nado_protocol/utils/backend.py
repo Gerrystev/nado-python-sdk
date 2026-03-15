@@ -2,7 +2,7 @@ from nado_protocol.utils.enum import StrEnum
 from eth_account import Account
 from eth_account.signers.local import LocalAccount
 from typing import Optional, Union
-from pydantic import BaseModel, AnyUrl, validator, root_validator
+from pydantic import BaseModel, AnyUrl, field_validator, model_validator, ConfigDict
 
 
 class NadoBackendURL(StrEnum):
@@ -51,29 +51,25 @@ class NadoClientOpts(BaseModel):
     chain_id: Optional[int] = None
     endpoint_addr: Optional[str] = None
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    @root_validator
-    def check_linked_signer(cls, values: dict):
+    @model_validator(mode="after")
+    def check_linked_signer(self):
         """
         Validates that if a linked_signer is set, a signer must also be set.
-
-        Args:
-            values (dict): The input values to be validated.
 
         Raises:
             ValueError: If linked_signer is set but signer is not.
 
         Returns:
-            dict: The validated values.
+            self: The validated model.
         """
-        signer, linked_signer = values.get("signer"), values.get("linked_signer")
-        if linked_signer and not signer:
+        if self.linked_signer and not self.signer:
             raise ValueError("linked_signer cannot be set if signer is not set")
-        return values
+        return self
 
-    @validator("url")
+    @field_validator("url")
+    @classmethod
     def clean_url(cls, v: AnyUrl) -> str:
         """
         Cleans the URL input by removing trailing slashes.
@@ -86,7 +82,8 @@ class NadoClientOpts(BaseModel):
         """
         return v.rstrip("/")
 
-    @validator("signer")
+    @field_validator("signer")
+    @classmethod
     def signer_to_local_account(cls, v: Optional[Signer]) -> Optional[LocalAccount]:
         """
         Validates and converts the signer to a LocalAccount instance.
@@ -101,7 +98,8 @@ class NadoClientOpts(BaseModel):
             return v
         return Account.from_key(v)
 
-    @validator("linked_signer")
+    @field_validator("linked_signer")
+    @classmethod
     def linked_signer_to_local_account(
         cls, v: Optional[Signer]
     ) -> Optional[LocalAccount]:

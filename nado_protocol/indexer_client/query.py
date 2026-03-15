@@ -68,7 +68,7 @@ class IndexerQueryClient:
         Args:
             opts (IndexerClientOpts): Client configuration options for connecting and interacting with the indexer service.
         """
-        self._opts = IndexerClientOpts.parse_obj(opts)
+        self._opts = IndexerClientOpts.model_validate(opts)
         self.url = self._opts.url
         self.url_v2: str = self.url.replace("/v1", "") + "/v2"
         self.session = requests.Session()
@@ -96,10 +96,10 @@ class IndexerQueryClient:
 
     @query.register
     def _(self, req: dict) -> IndexerResponse:
-        return self._query(NadoBaseModel.parse_obj(req))  # type: ignore
+        return self._query(NadoBaseModel.model_validate(req))  # type: ignore
 
     def _query(self, req: IndexerRequest) -> IndexerResponse:
-        res = self.session.post(self.url, json=req.dict())
+        res = self.session.post(self.url, json=req.model_dump())
         if res.status_code != 200:
             raise Exception(res.text)
         try:
@@ -127,7 +127,7 @@ class IndexerQueryClient:
             IndexerHistoricalOrdersData: The historical orders associated with the specified subaccount.
         """
         return ensure_data_type(
-            self.query(IndexerSubaccountHistoricalOrdersParams.parse_obj(params)).data,
+            self.query(IndexerSubaccountHistoricalOrdersParams.model_validate(params)).data,
             IndexerHistoricalOrdersData,
         )
 
@@ -159,7 +159,7 @@ class IndexerQueryClient:
             IndexerMatchesData: The match data corresponding to the provided parameters.
         """
         return ensure_data_type(
-            self.query(IndexerMatchesParams.parse_obj(params)).data, IndexerMatchesData
+            self.query(IndexerMatchesParams.model_validate(params)).data, IndexerMatchesData
         )
 
     def get_events(self, params: IndexerEventsParams) -> IndexerEventsData:
@@ -173,7 +173,7 @@ class IndexerQueryClient:
             IndexerEventsData: The event data corresponding to the provided parameters.
         """
         return ensure_data_type(
-            self.query(IndexerEventsParams.parse_obj(params)).data, IndexerEventsData
+            self.query(IndexerEventsParams.model_validate(params)).data, IndexerEventsData
         )
 
     def get_product_snapshots(
@@ -189,7 +189,7 @@ class IndexerQueryClient:
             IndexerProductSnapshotsData: The product snapshot data corresponding to the provided parameters.
         """
         return ensure_data_type(
-            self.query(IndexerProductSnapshotsParams.parse_obj(params)).data,
+            self.query(IndexerProductSnapshotsParams.model_validate(params)).data,
             IndexerProductSnapshotsData,
         )
 
@@ -206,7 +206,7 @@ class IndexerQueryClient:
             IndexerMarketSnapshotsData: The market snapshot data corresponding to the provided parameters.
         """
         return ensure_data_type(
-            self.query(IndexerMarketSnapshotsParams.parse_obj(params)).data,
+            self.query(IndexerMarketSnapshotsParams.model_validate(params)).data,
             IndexerMarketSnapshotsData,
         )
 
@@ -223,7 +223,7 @@ class IndexerQueryClient:
             IndexerCandlesticksData: The candlestick data corresponding to the provided parameters.
         """
         return ensure_data_type(
-            self.query(IndexerCandlesticksParams.parse_obj(params)).data,
+            self.query(IndexerCandlesticksParams.model_validate(params)).data,
             IndexerCandlesticksData,
         )
 
@@ -383,6 +383,6 @@ class IndexerQueryClient:
                 Each snapshot contains balances with trackedVars including netEntryUnrealized.
         """
         return ensure_data_type(
-            self.query(IndexerAccountSnapshotsParams.parse_obj(params)).data,
+            self.query(IndexerAccountSnapshotsParams.model_validate(params)).data,
             IndexerAccountSnapshotsData,
         )

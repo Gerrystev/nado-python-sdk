@@ -73,7 +73,7 @@ class EngineQueryClient:
         Args:
             opts (EngineClientOpts): Options for the client.
         """
-        self._opts: EngineClientOpts = EngineClientOpts.parse_obj(opts)
+        self._opts: EngineClientOpts = EngineClientOpts.model_validate(opts)
         self.url: str = self._opts.url
         self.url_v2: str = self.url.replace("/v1", "") + "/v2"
         self.session = requests.Session()  # type: ignore
@@ -93,7 +93,7 @@ class EngineQueryClient:
             BadStatusCodeException: If the response status code is not 200.
             QueryFailedException: If the query status is not "success".
         """
-        res = self.session.post(f"{self.url}/query", json=req.dict())
+        res = self.session.post(f"{self.url}/query", json=req.model_dump())
         if res.status_code != 200:
             raise BadStatusCodeException(res.text)
         try:
@@ -206,7 +206,7 @@ class EngineQueryClient:
         """
         txns_str = None
         if txs is not None:
-            txns_str = json.dumps([tx.dict() for tx in txs])
+            txns_str = json.dumps([tx.model_dump() for tx in txs])
 
         pre_state_str = None
         if pre_state is not None:
@@ -348,7 +348,7 @@ class EngineQueryClient:
             for the given subaccount and product.
         """
         return ensure_data_type(
-            self.query(QueryMaxOrderSizeParams.parse_obj(params)).data, MaxOrderSizeData
+            self.query(QueryMaxOrderSizeParams.model_validate(params)).data, MaxOrderSizeData
         )
 
     def get_max_withdrawable(
@@ -492,7 +492,7 @@ class EngineQueryClient:
 
     def get_orderbook(self, ticker_id: str, depth: int) -> Orderbook:
         return ensure_data_type(
-            Orderbook.parse_obj(
+            Orderbook.model_validate(
                 self._query_v2(
                     f"{self.url_v2}/orderbook?ticker_id={ticker_id}&depth={depth}"
                 )

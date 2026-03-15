@@ -1,15 +1,17 @@
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Any, Callable, Type, TypeVar, Union
 
 
 class NadoBaseModel(BaseModel):
     """
     This base model extends Pydantic's BaseModel and excludes fields with None
-    values by default when serializing via .dict() or .json()
+    values by default when serializing via .model_dump() or .model_dump_json()
     """
 
-    def dict(self, **kwargs):
+    model_config = ConfigDict(populate_by_name=True)
+
+    def model_dump(self, **kwargs):
         """
         Convert model to dictionary, excluding None fields by default.
 
@@ -20,9 +22,9 @@ class NadoBaseModel(BaseModel):
             dict: The model as a dictionary.
         """
         kwargs.setdefault("exclude_none", True)
-        return super().dict(**kwargs)
+        return super().model_dump(**kwargs)
 
-    def json(self, **kwargs):
+    def model_dump_json(self, **kwargs):
         """
         Convert model to JSON, excluding None fields by default.
 
@@ -33,7 +35,15 @@ class NadoBaseModel(BaseModel):
             str: The model as a JSON string.
         """
         kwargs.setdefault("exclude_none", True)
-        return super().json(**kwargs)
+        return super().model_dump_json(**kwargs)
+
+    def dict(self, **kwargs):
+        """Backward-compat alias for model_dump()."""
+        return self.model_dump(**kwargs)
+
+    def json(self, **kwargs):
+        """Backward-compat alias for model_dump_json()."""
+        return self.model_dump_json(**kwargs)
 
     def serialize_dict(self, fields: list[str], func: Callable):
         """
@@ -45,7 +55,7 @@ class NadoBaseModel(BaseModel):
             func (Callable): Function to apply to each field.
         """
         for field in fields:
-            self.__dict__[field] = func(self.__dict__[field])
+            setattr(self, field, func(getattr(self, field)))
 
 
 def parse_enum_value(value: Union[str, Enum]) -> str:
