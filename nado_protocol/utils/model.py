@@ -9,7 +9,7 @@ class NadoBaseModel(BaseModel):
     values by default when serializing via .model_dump() or .model_dump_json()
     """
 
-    model_config = ConfigDict(populate_by_name=True, extra="forbid")
+    model_config = ConfigDict(populate_by_name=True)
 
     def model_dump(self, **kwargs):
         """

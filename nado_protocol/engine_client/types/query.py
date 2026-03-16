@@ -1,6 +1,7 @@
 from nado_protocol.utils.enum import StrEnum
 from typing import Optional, Union
 from pydantic import field_validator
+from pydantic import ConfigDict
 from nado_protocol.utils.model import NadoBaseModel
 from nado_protocol.engine_client.types.models import (
     ApplyDeltaTx,
@@ -408,6 +409,8 @@ class AllProductsData(NadoBaseModel):
     """
     Data model for all the products available.
     """
+
+    model_config = ConfigDict(extra="forbid")
 
     spot_products: list[SpotProduct]
     perp_products: list[PerpProduct]
