@@ -68,19 +68,21 @@ class NadoClientOpts(BaseModel):
             raise ValueError("linked_signer cannot be set if signer is not set")
         return self
 
-    @field_validator("url")
+    @field_validator("url", mode="before")
     @classmethod
-    def clean_url(cls, v: AnyUrl) -> str:
+    def clean_url(cls, v: AnyUrl | str) -> str:
         """
         Cleans the URL input by removing trailing slashes.
 
         Args:
-            v (AnyUrl): The input URL.
+            v (AnyUrl | str): The input URL.
 
         Returns:
             str: The cleaned URL.
         """
-        return v.rstrip("/")
+        if v is None:
+            return v
+        return str(v).rstrip("/")
 
     @field_validator("signer")
     @classmethod

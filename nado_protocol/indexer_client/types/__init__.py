@@ -10,10 +10,12 @@ class IndexerClientOpts(BaseModel):
 
     url: AnyUrl
 
-    @field_validator("url")
+    @field_validator("url", mode="before")
     @classmethod
-    def clean_url(cls, v: AnyUrl) -> str:
-        return v.rstrip("/")
+    def clean_url(cls, v: AnyUrl | str) -> str:
+        if v is None:
+            return v
+        return str(v).rstrip("/")
 
 
 __all__ = [
