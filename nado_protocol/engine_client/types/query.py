@@ -527,10 +527,10 @@ class QueryResponse(NadoBaseModel):
     """
 
     status: ResponseStatus
-    data: Optional[QueryResponseData]
-    error: Optional[str]
-    error_code: Optional[int]
-    request_type: Optional[str]
+    data: Optional[QueryResponseData] = None
+    error: Optional[str] = None
+    error_code: Optional[int] = None
+    request_type: Optional[str] = None
 
 
 AssetsData = list[Asset]
