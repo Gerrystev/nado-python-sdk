@@ -128,7 +128,7 @@ class SymbolData(NadoBaseModel):
     taker_fee_rate_x18: str
     long_weight_initial_x18: str
     long_weight_maintenance_x18: str
-    max_open_interest_x18: Optional[str]
+    max_open_interest_x18: Optional[str] = None
 
 
 class SubaccountPosition(NadoBaseModel):
@@ -142,12 +142,12 @@ MarketLiquidity = Annotated[list[str], Field(min_length=2, max_length=2)]
 
 class Asset(NadoBaseModel):
     product_id: int
-    ticker_id: Optional[str]
-    market_type: Optional[str]
+    ticker_id: Optional[str] = None
+    market_type: Optional[str] = None
     name: str
     symbol: str
-    maker_fee: Optional[float]
-    taker_fee: Optional[float]
+    maker_fee: Optional[float] = None
+    taker_fee: Optional[float] = None
     can_withdraw: bool
     can_deposit: bool
 

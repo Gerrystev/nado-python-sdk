@@ -56,7 +56,7 @@ class PlaceOrdersParams(NadoBaseModel):
     """
 
     orders: Sequence[PlaceOrderParams]
-    stop_on_failure: Optional[bool]
+    stop_on_failure: Optional[bool] = None
 
 
 class PlaceMarketOrderParams(SignatureParams):
@@ -322,8 +322,8 @@ class TxRequest(NadoBaseModel):
 
     tx: dict
     signature: str
-    spot_leverage: Optional[bool]
-    digest: Optional[str]
+    spot_leverage: Optional[bool] = None
+    digest: Optional[str] = None
 
     @field_validator("tx")
     @classmethod
@@ -614,8 +614,8 @@ class PlaceOrdersItemResponse(NadoBaseModel):
     Data model for a single order in place orders response.
     """
 
-    digest: Optional[str]
-    error: Optional[str]
+    digest: Optional[str] = None
+    error: Optional[str] = None
 
 
 class PlaceOrdersResponse(NadoBaseModel):

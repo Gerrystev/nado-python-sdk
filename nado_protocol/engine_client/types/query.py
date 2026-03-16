@@ -102,8 +102,8 @@ class QuerySubaccountInfoParams(NadoBaseModel):
 
     type: str = EngineQueryType.SUBACCOUNT_INFO.value
     subaccount: str
-    txns: Optional[str]
-    pre_state: Optional[str]
+    txns: Optional[str] = None
+    pre_state: Optional[str] = None
 
 
 class QuerySubaccountOpenOrdersParams(NadoBaseModel):
@@ -142,8 +142,8 @@ class QuerySymbolsParams(NadoBaseModel):
     """
 
     type: str = EngineQueryType.SYMBOLS.value
-    product_type: Optional[str]
-    product_ids: Optional[list[int]]
+    product_type: Optional[str] = None
+    product_ids: Optional[list[int]] = None
 
 
 class QueryAllProductsParams(NadoBaseModel):
@@ -164,7 +164,7 @@ class QueryMarketPriceParams(NadoBaseModel):
 
 
 class SpotLeverageSerializerMixin(NadoBaseModel):
-    spot_leverage: Optional[bool]
+    spot_leverage: Optional[bool] = None
 
     @field_validator("spot_leverage")
     @classmethod
@@ -182,8 +182,8 @@ class QueryMaxOrderSizeParams(SpotLeverageSerializerMixin):
     product_id: int
     price_x18: str
     direction: MaxOrderSizeDirection
-    reduce_only: Optional[bool]
-    isolated: Optional[bool]
+    reduce_only: Optional[bool] = None
+    isolated: Optional[bool] = None
 
     @field_validator("direction")
     @classmethod
@@ -331,7 +331,7 @@ class SubaccountInfoData(NadoBaseModel):
     perp_balances: list[PerpProductBalance]
     spot_products: list[SpotProduct]
     perp_products: list[PerpProduct]
-    pre_state: Optional[PreState]
+    pre_state: Optional[PreState] = None
 
     def parse_subaccount_balance(
         self, product_id: int
