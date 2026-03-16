@@ -69,7 +69,8 @@ class IndexerQueryClient:
             opts (IndexerClientOpts): Client configuration options for connecting and interacting with the indexer service.
         """
         self._opts = IndexerClientOpts.model_validate(opts)
-        self.url = self._opts.url
+        # Ensure url is always a plain string, even if validated as AnyUrl
+        self.url = str(self._opts.url)
         self.url_v2: str = self.url.replace("/v1", "") + "/v2"
         self.session = requests.Session()
         self.session.headers.update({"Accept-Encoding": "gzip"})
