@@ -8,7 +8,7 @@ from nado_protocol.contracts.eip712.types import (
     EIP712Types,
     get_nado_eip712_type,
 )
-from eth_account.messages import encode_structured_data, _hash_eip191_message
+from eth_account.messages import encode_typed_data
 
 from nado_protocol.contracts.types import NadoTxType
 
@@ -58,8 +58,8 @@ def get_eip712_typed_data_digest(typed_data: EIP712TypedData) -> str:
     Returns:
         str: The hexadecimal representation of the hash.
     """
-    encoded_data = encode_structured_data(typed_data.model_dump())
-    return f"0x{_hash_eip191_message(encoded_data).hex()}"
+    signable_message = encode_typed_data(typed_data.model_dump())
+    return signable_message.hash.hex()
 
 
 def sign_eip712_typed_data(typed_data: EIP712TypedData, signer: LocalAccount) -> str:
@@ -74,6 +74,6 @@ def sign_eip712_typed_data(typed_data: EIP712TypedData, signer: LocalAccount) ->
     Returns:
         str: The hexadecimal representation of the signature.
     """
-    encoded_data = encode_structured_data(typed_data.model_dump())
-    typed_data_hash = signer.sign_message(encoded_data)
-    return typed_data_hash.signature.hex()
+    signable_message = encode_typed_data(typed_data.model_dump())
+    signed = signer.sign_message(signable_message)
+    return signed.signature.hex()

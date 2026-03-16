@@ -35,7 +35,7 @@ class ListTriggerOrdersParams(NadoBaseModel):
     Parameters for listing trigger orders
     """
 
-    type = "list_trigger_orders"
+    type: str = "list_trigger_orders"
     tx: ListTriggerOrdersTx
     product_ids: Optional[List[int]] = None
     trigger_types: Optional[List[TriggerType]] = None
@@ -53,7 +53,7 @@ class ListTwapExecutionsParams(NadoBaseModel):
     Parameters for listing TWAP executions for a specific order
     """
 
-    type = "list_twap_executions"
+    type: str = "list_twap_executions"
     digest: str
 
 
