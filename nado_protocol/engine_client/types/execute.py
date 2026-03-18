@@ -37,11 +37,11 @@ class PlaceOrderParams(SignatureParams):
         spot_leverage (Optional[bool]): An optional flag indicating whether leverage should be used for the order. By default, leverage is assumed.
     """
 
-    id: Optional[int]
+    id: Optional[int] = None
     product_id: int
     order: OrderParams
-    digest: Optional[str]
-    spot_leverage: Optional[bool]
+    digest: Optional[str] = None
+    spot_leverage: Optional[bool] = None
 
 
 class PlaceOrdersParams(NadoBaseModel):
@@ -77,9 +77,9 @@ class PlaceMarketOrderParams(SignatureParams):
 
     product_id: int
     market_order: MarketOrderParams
-    slippage: Optional[float]
-    spot_leverage: Optional[bool]
-    reduce_only: Optional[bool]
+    slippage: Optional[float] = None
+    spot_leverage: Optional[bool] = None
+    reduce_only: Optional[bool] = None
 
 
 class CancelOrdersParams(BaseParamsSigned):
@@ -99,7 +99,7 @@ class CancelOrdersParams(BaseParamsSigned):
 
     productIds: list[int]
     digests: list[Digest]
-    nonce: Optional[int]
+    nonce: Optional[int] = None
 
     @field_validator("digests")
     @classmethod
@@ -120,8 +120,8 @@ class CancelProductOrdersParams(BaseParamsSigned):
     """
 
     productIds: list[int]
-    digest: Optional[str]
-    nonce: Optional[int]
+    digest: Optional[str] = None
+    nonce: Optional[int] = None
 
 
 class CancelAndPlaceParams(NadoBaseModel):
@@ -152,7 +152,7 @@ class WithdrawCollateralParams(BaseParamsSigned):
 
     productId: int
     amount: int
-    spot_leverage: Optional[bool]
+    spot_leverage: Optional[bool] = None
 
 
 class LiquidateSubaccountParams(BaseParamsSigned):
@@ -195,7 +195,7 @@ class MintNlpParams(BaseParamsSigned):
     """
 
     quoteAmount: int
-    spot_leverage: Optional[bool]
+    spot_leverage: Optional[bool] = None
 
 
 class BurnNlpParams(BaseParamsSigned):

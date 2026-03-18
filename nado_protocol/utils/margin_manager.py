@@ -78,9 +78,9 @@ class CrossPositionMetrics(BaseModel):
     symbol: str
     position_size: Decimal
     notional_value: Decimal
-    avg_entry_price: Optional[Decimal]  # Average entry price (requires indexer data)
-    est_liq_price: Optional[Decimal]  # Estimated liquidation price
-    est_pnl: Optional[Decimal]  # Estimated PnL (requires indexer data)
+    avg_entry_price: Optional[Decimal] = None  # Average entry price (requires indexer data)
+    est_liq_price: Optional[Decimal] = None  # Estimated liquidation price
+    est_pnl: Optional[Decimal] = None  # Estimated PnL (requires indexer data)
     unsettled: Decimal  # Unsettled quote (v_quote_balance)
     margin_used: Decimal
     initial_health: Decimal

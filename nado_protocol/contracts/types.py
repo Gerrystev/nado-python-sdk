@@ -95,13 +95,13 @@ class DepositCollateralParams(NadoBaseModel):
     subaccount_name: str
     product_id: int
     amount: int
-    referral_code: Optional[str]
+    referral_code: Optional[str] = None
 
 
 class ClaimTokensParams(NadoBaseModel):
     epoch: int
-    amount: Optional[int]
-    claim_all: Optional[bool]
+    amount: Optional[int] = None
+    claim_all: Optional[bool] = None
 
 
 class ClaimTokensContractParams(NadoBaseModel):

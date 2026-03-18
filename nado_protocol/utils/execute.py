@@ -30,7 +30,7 @@ class BaseParams(NadoBaseModel):
     """
 
     sender: Subaccount
-    nonce: Optional[int]
+    nonce: Optional[int] = None
 
     model_config = ConfigDict(validate_assignment=True)
 
@@ -60,7 +60,7 @@ class SignatureParams(NadoBaseModel):
         signature (Optional[str]): An optional string representing the signature for the request.
     """
 
-    signature: Optional[str]
+    signature: Optional[str] = None
 
 
 class BaseParamsSigned(BaseParams, SignatureParams):

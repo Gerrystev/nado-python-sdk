@@ -29,11 +29,11 @@ class NadoClientContext:
 
 
 class NadoClientContextOpts(BaseModel):
-    contracts_context: Optional[NadoContractsContext]
-    rpc_node_url: Optional[AnyUrl]
-    engine_endpoint_url: Optional[AnyUrl]
-    indexer_endpoint_url: Optional[AnyUrl]
-    trigger_endpoint_url: Optional[AnyUrl]
+    contracts_context: Optional[NadoContractsContext] = None
+    rpc_node_url: Optional[AnyUrl] = None
+    engine_endpoint_url: Optional[AnyUrl] = None
+    indexer_endpoint_url: Optional[AnyUrl] = None
+    trigger_endpoint_url: Optional[AnyUrl] = None
 
 
 def create_nado_client_context(
