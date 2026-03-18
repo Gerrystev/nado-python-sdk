@@ -16,6 +16,7 @@ from nado_protocol.engine_client.types.execute import (
     ExecuteResponse,
     LinkSignerParams,
     LiquidateSubaccountParams,
+    PlaceOrdersParams,
     MintNlpParams,
     OrderParams,
     PlaceMarketOrderParams,
@@ -132,6 +133,36 @@ class EngineExecuteClient(NadoBaseExecute):
         book_is_empty = (is_bid and len(bids) == 0) or (not is_bid and len(asks) == 0)
         if book_is_empty:
             raise Exception("Orderbook is empty.")
+
+    def place_orders(self, params: PlaceOrdersParams) -> ExecuteResponse:
+        """
+        Execute a place orders operation for placing multiple trigger orders in a single request.
+
+        Args:
+            params (PlaceOrdersParams): Parameters required for placing multiple orders.
+
+        Returns:
+            ExecuteResponse: Response of the execution, including status and potential error message.
+        """
+        params = PlaceOrdersParams.model_validate(params)
+
+        prepared_orders: list[PlaceOrderParams] = []
+        for order_params in params.orders:
+            # Ensure sender/nonce are injected for each underlying order
+            prepared_order = self.prepare_execute_params(order_params.order, True)
+            order_params.order = prepared_order
+
+            # Ensure each order is individually signed if not already provided
+            order_params.signature = order_params.signature or self._sign(
+                NadoExecuteType.PLACE_ORDER,
+                prepared_order.model_dump(),
+                order_params.product_id,
+            )
+
+            prepared_orders.append(order_params)
+
+        params.orders = prepared_orders
+        return self.execute(params)
 
     def place_order(self, params: PlaceOrderParams) -> ExecuteResponse:
         """
