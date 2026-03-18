@@ -8,24 +8,9 @@ from nado_protocol.contracts.eip712.types import (
     EIP712Types,
     get_nado_eip712_type,
 )
-from eth_account.messages import encode_typed_data
-import inspect
+from eth_account.messages import encode_typed_data, _hash_eip191_message
 
 from nado_protocol.contracts.types import NadoTxType
-
-
-def encode_eip712_typed_data(typed_data: EIP712TypedData):
-    """
-    eth-account's `encode_typed_data` changed its calling convention over time.
-    In newer versions, passing a single positional dict is treated as `domain_data`,
-    not the full message, which can raise `Invalid domain key: types`.
-    """
-    dumped = typed_data.model_dump()
-    sig = inspect.signature(encode_typed_data)
-    if "full_message" in sig.parameters:
-        return encode_typed_data(full_message=dumped)
-    # Older eth-account versions accepted the full EIP-712 payload as a single arg.
-    return encode_typed_data(dumped)
 
 
 def build_eip712_typed_data(
@@ -73,8 +58,8 @@ def get_eip712_typed_data_digest(typed_data: EIP712TypedData) -> str:
     Returns:
         str: The hexadecimal representation of the hash.
     """
-    signable_message = encode_eip712_typed_data(typed_data)
-    return signable_message.hash.hex()
+    encoded_data = encode_typed_data(full_message=typed_data.model_dump())
+    return f"0x{_hash_eip191_message(encoded_data).hex()}"
 
 
 def sign_eip712_typed_data(typed_data: EIP712TypedData, signer: LocalAccount) -> str:
@@ -89,6 +74,6 @@ def sign_eip712_typed_data(typed_data: EIP712TypedData, signer: LocalAccount) ->
     Returns:
         str: The hexadecimal representation of the signature.
     """
-    signable_message = encode_eip712_typed_data(typed_data)
-    signed = signer.sign_message(signable_message)
-    return signed.signature.hex()
+    signable_msg = encode_typed_data(full_message=typed_data.dict())
+    signed_message = signer.sign_message(signable_msg)
+    return signed_message.signature.hex()
