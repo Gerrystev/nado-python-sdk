@@ -1,5 +1,5 @@
 from typing import Union, Sequence
-from pydantic import validator
+from pydantic import field_serializer, field_validator
 from nado_protocol.contracts.types import NadoExecuteType
 from nado_protocol.utils.bytes32 import bytes32_to_hex
 from nado_protocol.utils.model import NadoBaseModel
@@ -56,8 +56,9 @@ class PlaceTriggerOrderRequest(NadoBaseModel):
 
     place_order: PlaceTriggerOrderParams
 
-    @validator("place_order")
-    def serialize(cls, v: PlaceTriggerOrderParams) -> PlaceTriggerOrderParams:
+    @field_validator("place_order")
+    @classmethod
+    def validate_place_order(cls, v: PlaceTriggerOrderParams) -> PlaceTriggerOrderParams:
         if v.order.nonce is None:
             raise ValueError("Missing order `nonce`")
         if v.signature is None:
@@ -68,6 +69,14 @@ class PlaceTriggerOrderRequest(NadoBaseModel):
             ["nonce", "priceX18", "amount", "expiration", "appendix"], str
         )
         return v
+
+    @field_serializer("place_order")
+    def serialize_place_order(self, v: PlaceTriggerOrderParams) -> dict:
+        dumped = v.model_dump()
+        sender = v.order.sender
+        if isinstance(sender, bytes):
+            dumped["order"]["sender"] = bytes32_to_hex(sender)
+        return dumped
 
 
 class PlaceTriggerOrdersRequest(NadoBaseModel):
@@ -83,7 +92,7 @@ class PlaceTriggerOrdersRequest(NadoBaseModel):
 
     place_orders: PlaceTriggerOrdersParams
 
-    @validator("place_orders")
+    @field_validator("place_orders", mode="before")
     def serialize(cls, v: PlaceTriggerOrdersParams) -> PlaceTriggerOrdersParams:
         for order_params in v.orders:
             if order_params.order.nonce is None:

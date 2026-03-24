@@ -59,7 +59,8 @@ class EngineExecuteClient(NadoBaseExecute):
         super().__init__(opts)
         self._querier = querier or EngineQueryClient(opts)
         self._opts: EngineClientOpts = EngineClientOpts.model_validate(opts)
-        self.url: str = self._opts.url
+        # Normalize to plain string without trailing slash.
+        self.url: str = str(self._opts.url).rstrip("/")
         self.session = requests.Session()
         self.session.headers.update({"Accept-Encoding": "gzip"})
 
@@ -175,12 +176,16 @@ class EngineExecuteClient(NadoBaseExecute):
         Returns:
             ExecuteResponse: Response of the execution, including status and potential error message.
         """
-        params = PlaceOrderParams.model_validate(params)
-        params.order = self.prepare_execute_params(params.order, True)
-        params.signature = params.signature or self._sign(
-            NadoExecuteType.PLACE_ORDER, params.order.model_dump(), params.product_id
+        # Work on a deep copy to avoid mutating caller-owned params.
+        # This keeps repeated calls with the same input object deterministic.
+        parsed_params = PlaceOrderParams.model_validate(params).model_copy(deep=True)
+        parsed_params.order = self.prepare_execute_params(parsed_params.order, True)
+        parsed_params.signature = parsed_params.signature or self._sign(
+            NadoExecuteType.PLACE_ORDER,
+            parsed_params.order.model_dump(),
+            parsed_params.product_id,
         )
-        return self.execute(params)
+        return self.execute(parsed_params)
 
     def place_market_order(self, params: PlaceMarketOrderParams) -> ExecuteResponse:
         """

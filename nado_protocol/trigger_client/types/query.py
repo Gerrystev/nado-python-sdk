@@ -1,7 +1,7 @@
 from typing import Optional, List, Union
 from enum import Enum
 
-from pydantic import validator
+from pydantic import field_serializer
 
 from nado_protocol.engine_client.types.models import ResponseStatus
 from nado_protocol.trigger_client.types.models import TriggerOrderData
@@ -159,8 +159,8 @@ class TriggerOrdersData(NadoBaseModel):
 class ListTriggerOrdersRequest(ListTriggerOrdersParams):
     tx: ListTriggerOrdersTx
 
-    @validator("tx")
-    def serialize(cls, v: ListTriggerOrdersTx) -> ListTriggerOrdersTx:
+    @field_serializer("tx")
+    def tx_serializer(self, v: ListTriggerOrdersTx) -> ListTriggerOrdersTx:
         if isinstance(v.sender, bytes):
             v.serialize_dict(["sender"], bytes32_to_hex)
         v.serialize_dict(["recvTime"], str)

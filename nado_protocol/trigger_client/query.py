@@ -24,7 +24,7 @@ class TriggerQueryClient(NadoBaseExecute):
 
     def __init__(self, opts: TriggerClientOpts):
         self._opts: TriggerClientOpts = TriggerClientOpts.model_validate(opts)
-        self.url: str = self._opts.url
+        self.url: str = str(self._opts.url).rstrip("/")
         self.session = requests.Session()  # type: ignore
         self.session.headers.update({"Accept-Encoding": "gzip"})
 

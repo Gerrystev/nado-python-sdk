@@ -74,8 +74,8 @@ class EngineQueryClient:
             opts (EngineClientOpts): Options for the client.
         """
         self._opts: EngineClientOpts = EngineClientOpts.model_validate(opts)
-        # Ensure url is always a plain string, even if validated as AnyUrl
-        self.url: str = str(self._opts.url)
+        # Keep URL as plain string without trailing slash for stable comparisons
+        self.url: str = str(self._opts.url).rstrip("/")
         self.url_v2: str = self.url.replace("/v1", "") + "/v2"
         self.session = requests.Session()  # type: ignore
         self.session.headers.update({"Accept-Encoding": "gzip"})

@@ -76,4 +76,4 @@ def sign_eip712_typed_data(typed_data: EIP712TypedData, signer: LocalAccount) ->
     """
     signable_msg = encode_typed_data(full_message=typed_data.dict())
     signed_message = signer.sign_message(signable_msg)
-    return signed_message.signature.hex()
+    return signed_message.signature.to_0x_hex()

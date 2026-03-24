@@ -449,7 +449,7 @@ class NadoContracts:
         signed_tx = self.w3.eth.account.sign_transaction(tx, private_key=signer.key)
         signed_tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         self.w3.eth.wait_for_transaction_receipt(signed_tx_hash)
-        return signed_tx_hash.hex()
+        return signed_tx_hash.to_0x_hex()
 
     def _build_tx_params(self, signer: LocalAccount) -> TxParams:
         tx_params: TxParams = {

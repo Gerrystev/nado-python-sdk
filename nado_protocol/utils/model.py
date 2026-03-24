@@ -9,7 +9,7 @@ class NadoBaseModel(BaseModel):
     values by default when serializing via .model_dump() or .model_dump_json()
     """
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, coerce_numbers_to_str=True)
 
     def model_dump(self, **kwargs):
         """
@@ -55,7 +55,7 @@ class NadoBaseModel(BaseModel):
             func (Callable): Function to apply to each field.
         """
         for field in fields:
-            setattr(self, field, func(getattr(self, field)))
+            self.__dict__[field] = func(self.__dict__[field])
 
 
 def parse_enum_value(value: Union[str, Enum]) -> str:
