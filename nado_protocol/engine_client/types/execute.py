@@ -646,7 +646,7 @@ class PlaceOrdersResponse(NadoBaseModel):
     Data model for place orders response.
     """
 
-    place_orders: list[PlaceOrdersItemResponse]
+    data: list[PlaceOrdersItemResponse]
 
 
 class CancelOrdersResponse(NadoBaseModel):
