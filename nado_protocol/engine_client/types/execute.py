@@ -641,14 +641,6 @@ class PlaceOrdersItemResponse(NadoBaseModel):
     error: Optional[str] = None
 
 
-class PlaceOrdersResponse(NadoBaseModel):
-    """
-    Data model for place orders response.
-    """
-
-    data: list[PlaceOrdersItemResponse]
-
-
 class CancelOrdersResponse(NadoBaseModel):
     """
     Data model for cancelled orders response.
@@ -658,7 +650,7 @@ class CancelOrdersResponse(NadoBaseModel):
 
 
 ExecuteResponseData = Union[
-    PlaceOrderResponse, PlaceOrdersResponse, CancelOrdersResponse
+    PlaceOrderResponse, PlaceOrdersItemResponse, CancelOrdersResponse
 ]
 
 
