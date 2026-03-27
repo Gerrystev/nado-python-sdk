@@ -650,7 +650,7 @@ class CancelOrdersResponse(NadoBaseModel):
 
 
 ExecuteResponseData = Union[
-    PlaceOrderResponse, PlaceOrdersItemResponse, CancelOrdersResponse
+    PlaceOrderResponse, list[PlaceOrdersItemResponse], CancelOrdersResponse
 ]
 
 
